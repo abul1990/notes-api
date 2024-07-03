@@ -13,10 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -87,18 +84,18 @@ class NoteServiceTest {
                 new NoteResponse(anotherNote.getId(), anotherNote.getTitle(), anotherNote.getText(), anotherNote.getTag(), anotherNote.getCreatedDate())
         );
 
-        when(noteRepository.findAll()).thenReturn(notes);
+        when(noteRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(notes));
         when(noteMapper.toResponseDTOList(anyList())).thenReturn(expectedResponse);
 
         // When
-        List<NoteResponse> actualResponse = noteService.fetchNotes();
+        List<NoteResponse> actualResponse = noteService.fetchNotes(0, 10);
 
         // Then
         assertEquals(2, actualResponse.size());
         assertEquals(expectedResponse.get(0).getTitle(), actualResponse.get(0).getTitle());
         assertEquals(expectedResponse.get(1).getText(), actualResponse.get(1).getText());
 
-        verify(noteRepository, times(1)).findAll();
+        verify(noteRepository, times(1)).findAll(any(Pageable.class));
         verify(noteMapper, times(1)).toResponseDTOList(anyList());
     }
 

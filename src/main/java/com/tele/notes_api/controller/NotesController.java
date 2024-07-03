@@ -7,6 +7,7 @@ import com.tele.notes_api.model.NoteResponse;
 import com.tele.notes_api.model.NoteSummary;
 import com.tele.notes_api.service.NoteService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ public class NotesController {
 
     @GetMapping
     public ResponseEntity<List<NoteSummary>> fetchNoteSummaries(@Valid @RequestParam(required = false) Set<Constant.Tag> tags,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
+                                                                @RequestParam(defaultValue = "0") @Min(0) int page,
+                                                                @RequestParam(defaultValue = "10") @Min(1) int size) {
         return ResponseEntity.ok(noteService.fetchNoteSummaries(tags, page, size));
     }
 
@@ -41,8 +42,9 @@ public class NotesController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<List<NoteResponse>> fetchNotes() {
-        return ResponseEntity.ok(noteService.fetchNotes());
+    public ResponseEntity<List<NoteResponse>> fetchNotes(@RequestParam(defaultValue = "0") @Min(0) int page,
+                                                         @RequestParam(defaultValue = "10") @Min(1) int size) {
+        return ResponseEntity.ok(noteService.fetchNotes(page, size));
     }
 
     @GetMapping("/{id}")

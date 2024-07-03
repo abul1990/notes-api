@@ -22,12 +22,13 @@ This project is a simple Notes API built with Spring Boot and Gradle. It allows 
 
 ## Technologies
 
-- Java 17
-- SpringBoot
+- Java 17 
+- SpringBoot 3
 - MongoDB
 - Gradle
 - Docker
 - MapStruct (Used for object mapping, for more info please refer https://mapstruct.org/)
+- TestContainer (Used for integration test, please refer https://java.testcontainers.org/)
 
 ## Getting Started
 
@@ -59,6 +60,8 @@ To build the project, run the following command:
 ```
 
 The above build command will compile the project, run tests, and package the application into a JAR file located in build/libs.
+
+Note: test task will execute the integration tests by default, which require Docker to be running.
 
 ### Running the Application
 
@@ -173,6 +176,7 @@ After setting up Docker Build, this job builds a Docker image named notes-api:la
 The Docker image built in the dockerize job can be further integrated with continuous deployment pipelines, ensuring that updates to the application are seamlessly propagated across environments.
 
 For more information refer [GitHub Actions](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle)
+
 ## Contact
 
 For any questions or issues, please reach out to Notes API Service team.

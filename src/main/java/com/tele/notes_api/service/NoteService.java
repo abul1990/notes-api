@@ -32,13 +32,14 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public List<NoteResponse> fetchNotes() {
-        return noteMapper.toResponseDTOList(noteRepository.findAll());
+    public List<NoteResponse> fetchNotes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+        return noteMapper.toResponseDTOList(noteRepository.findAll(pageable).getContent());
     }
 
     public List<NoteSummary> fetchNoteSummaries(Set<Constant.Tag> tags, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-
 
         Page<Note> notesPage = Optional.ofNullable(tags)
                 .filter(__ -> !tags.isEmpty())

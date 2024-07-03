@@ -1,4 +1,4 @@
-package com.tele.notes_api;
+package com.tele.notes_api.integration;
 
 import com.tele.notes_api.model.NoteResponse;
 import org.junit.jupiter.api.AfterAll;
@@ -48,7 +48,10 @@ public class NotesControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
                 .exchange()
-                .expectStatus().isCreated();
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.title").isEqualTo("Test Note")
+                .jsonPath("$.text").isEqualTo("This is a test note.");
     }
 
     @Test
@@ -61,13 +64,15 @@ public class NotesControllerIntegrationTest {
                                 .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").isArray();
     }
 
     @Test
     public void shouldReturnNoteStatsForExistingNote() {
         // Create a new note
-        String newNote = "{ \"title\": \"Test Note\", \"text\": \"note is just a note.\", \"tag\": \"PERSONAL\", \"createdDate\": \"2024-07-02T10:36:00\" }";
+        String newNote = "{ \"title\": \"Test Note\", \"text\": \"note is just a note\", \"tag\": \"PERSONAL\", \"createdDate\": \"2024-07-02T10:36:00\" }";
         NoteResponse noteResponse = webTestClient.post().uri("/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
@@ -79,7 +84,12 @@ public class NotesControllerIntegrationTest {
         webTestClient.get().uri("/notes/" + noteResponse.getId() + "/stats")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.note").isEqualTo(2)
+                .jsonPath("$.is").isEqualTo(1)
+                .jsonPath("$.just").isEqualTo(1)
+                .jsonPath("$.a").isEqualTo(1);
     }
 
     @Test
