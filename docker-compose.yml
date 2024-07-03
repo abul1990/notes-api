@@ -1,0 +1,30 @@
+services:
+  mongodb:
+    image: mongo:7.0.12
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - notes-network
+
+  api:
+    image: notes-api:latest
+    container_name: api
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/notesdb
+    ports:
+      - "8080:8080"
+    networks:
+      - notes-network
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  notes-network:
+    driver: bridge

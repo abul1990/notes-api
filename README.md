@@ -87,7 +87,7 @@ The following endpoints are available in the Notes API:
 - GET /notes/{id}: Get a note by id
 - PUT /notes/{id} : Update a note using id
 - DELETE /notes/{id}: Delete a note using id
-- GEt /notes/{id}/stats: Get note text stats by word occurrence
+- GET /notes/{id}/stats: Get note text stats by word occurrence
 
 ### Example Requests
 

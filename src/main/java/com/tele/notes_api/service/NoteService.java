@@ -54,12 +54,12 @@ public class NoteService {
     public NoteResponse getNote(UUID id) {
         return noteRepository.findById(id)
                 .map(noteMapper::toResponseDTO)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Note with ID %s not found", id)));
+                .orElseThrow(() -> throwResourceNotFoundException(id));
     }
 
     public NoteResponse updateNote(UUID id, NoteRequest noteRequest) {
         Note existingNote = noteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Note with ID %s not found", id)));
+                .orElseThrow(() -> throwResourceNotFoundException(id));
         existingNote.setTitle(noteRequest.getTitle());
         existingNote.setText(noteRequest.getText());
         existingNote.setTag(noteRequest.getTag());
@@ -70,15 +70,19 @@ public class NoteService {
 
     public void deleteNote(UUID id) {
         if (!noteRepository.existsById(id)) {
-            throw new ResourceNotFoundException(String.format("Note with ID %s not found", id));
+            throw throwResourceNotFoundException(id);
         }
         noteRepository.deleteById(id);
     }
 
     public Map<String, Integer> getNoteTextStats(UUID id) {
         Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Note with ID %s not found", id)));
+                .orElseThrow(() -> throwResourceNotFoundException(id));
         return calculateWordFrequency(note.getText());
+    }
+
+    private ResourceNotFoundException throwResourceNotFoundException(UUID id) {
+        return new ResourceNotFoundException(String.format("Note with ID %s not found", id));
     }
 
     private Map<String, Integer> calculateWordFrequency(String text) {

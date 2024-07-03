@@ -24,8 +24,6 @@ public interface NoteMapper {
 
     @AfterMapping
     default void setUUIDIfNotPresent(@MappingTarget Note note) {
-        if (note.getId() == null) {
-            note.setId(UUID.randomUUID());
-        }
+        note.setId(UUID.randomUUID());
     }
 }
