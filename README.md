@@ -123,13 +123,31 @@ Ensure you installed docker in your local machine
 docker build -t notes-api:latest .
 ```
 
-The above docker command will generate new docker image with the latest tag. 
+The above docker command will generate new docker image with the latest tag.
 
-### Running the Docker Container
+### Running Docker Compose
 
-You can use above generated docker image to spin a container.
+You can use above generated docker image to spin a API container alone.
 ```bash
 docker run -p 8080:8080 notes-api:latest
+```
+Alternatively, for a complete setup using Docker Compose
+
+```bash
+docker-compose -p notes up -d
+```
+
+This command will start two services defined in the docker-compose.yml file:
+
+- mongodb: MongoDB database server.
+- api: Notes API server running on port 8080.
+
+Once the containers are running, you can access the Notes API at http://localhost:8080.
+
+To stop the Docker containers, run
+
+```bash
+docker-compose -p notes down
 ```
 
 ## Continuous Integration
