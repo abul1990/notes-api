@@ -101,9 +101,8 @@ Create a new note with a specified title, text, and tag. Supported tag value are
 ```bash
 curl -X POST \
      -H "Content-Type: application/json" \
-     -d '{"title":"Example Note","text":"note is just a note.","tag":"PERSONAL"}' \
+     -d '{"title":"Example Note","text":"note is just a note.","tag":"PERSONAL", "createdDate": "2024-07-02T10:36:00"}' \
      http://localhost:8080/notes
-
 ```
 
 GET /notes/{id}/stats
