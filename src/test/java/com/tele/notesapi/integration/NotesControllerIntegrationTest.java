@@ -43,7 +43,14 @@ public class NotesControllerIntegrationTest {
 
     @Test
     public void shouldCreateNoteWithValidPayload() {
-        String newNote = "{ \"title\": \"Test Note\", \"text\": \"This is a test note.\", \"tag\": \"PERSONAL\", \"createdDate\": \"2024-07-02T10:36:00\" }";
+        String newNote = """
+                {
+                  "title": "Test Note",
+                  "text": "This is a test note.",
+                  "tag": "PERSONAL",
+                  "createdDate": "2024-07-02T10:36:00"
+                }
+                """;
         webTestClient.post().uri("/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
@@ -72,7 +79,14 @@ public class NotesControllerIntegrationTest {
     @Test
     public void shouldReturnNoteStatsForExistingNote() {
         // Create a new note
-        String newNote = "{ \"title\": \"Test Note\", \"text\": \"note is just a note\", \"tag\": \"PERSONAL\", \"createdDate\": \"2024-07-02T10:36:00\" }";
+        String newNote = """
+                {
+                  "title": "Test Note",
+                  "text": "note is just a note",
+                  "tag": "PERSONAL",
+                  "createdDate": "2024-07-02T10:36:00"
+                }
+                """;
         NoteResponse noteResponse = webTestClient.post().uri("/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
@@ -94,7 +108,14 @@ public class NotesControllerIntegrationTest {
 
     @Test
     public void shouldReturnBadRequestForInvalidPayload() {
-        String newNote = "{ \"title\": \"\", \"text\": \"This is a test note.\", \"tag\": \"PERSONAL\", \"createdDate\": \"2024-07-02T10:36:00\" }";
+        String newNote = """
+                {
+                  "title": "",
+                  "text": "This is a test note.",
+                  "tag": "PERSONAL",
+                  "createdDate": "2024-07-02T10:36:00"
+                }
+                """;
         webTestClient.post().uri("/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)

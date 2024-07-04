@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class NoteService {
-    private static final Pattern WORD_SPLIT_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern WORD_SPLIT_PATTERN = Pattern.compile("[\\s.,!?;:]+");
 
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;

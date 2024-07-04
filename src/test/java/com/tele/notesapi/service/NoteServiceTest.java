@@ -234,7 +234,7 @@ class NoteServiceTest {
         Note note = new Note();
         note.setId(noteId);
         note.setTitle("Title 1");
-        note.setText("note is just a note");
+        note.setText("note is just a note.");
         Map<String, Integer> expectedStats = Map.of(
                 "note", 2,
                 "is", 1,
