@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: notes-api
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: notesdb
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health
