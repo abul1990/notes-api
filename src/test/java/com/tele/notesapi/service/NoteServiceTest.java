@@ -42,17 +42,17 @@ class NoteServiceTest {
         NoteRequest request = new NoteRequest();
         request.setTitle("Test Note");
         request.setText("This is a test note.");
-        request.setTag(Constant.Tag.PERSONAL);
+        request.setTags(Set.of(Constant.Tag.PERSONAL));
 
         Note noteEntity = new Note();
         noteEntity.setTitle(request.getTitle());
         noteEntity.setText(request.getText());
-        noteEntity.setTag(request.getTag());
+        noteEntity.setTags(request.getTags());
 
         NoteResponse expectedResponse = new NoteResponse();
         expectedResponse.setTitle(request.getTitle());
         expectedResponse.setText(request.getText());
-        expectedResponse.setTag(request.getTag());
+        expectedResponse.setTags(request.getTags());
 
         // Mocking behavior
         when(noteMapper.toEntity(any(NoteRequest.class))).thenReturn(noteEntity);
@@ -65,7 +65,7 @@ class NoteServiceTest {
         // Then
         assertEquals(expectedResponse.getTitle(), actualResponse.getTitle());
         assertEquals(expectedResponse.getText(), actualResponse.getText());
-        assertEquals(expectedResponse.getTag(), actualResponse.getTag());
+        assertEquals(expectedResponse.getTags(), actualResponse.getTags());
 
         verify(noteMapper, times(1)).toEntity(any(NoteRequest.class));
         verify(noteRepository, times(1)).save(any(Note.class));
@@ -75,20 +75,20 @@ class NoteServiceTest {
     @Test
     void shouldFetchAllNotes() {
         // Given
-        Note note = new Note(UUID.randomUUID(), "Test Note 1", "Text 1", Constant.Tag.PERSONAL, LocalDateTime.now());
-        Note anotherNote = new Note(UUID.randomUUID(), "Test Note 2", "Text 2", Constant.Tag.BUSINESS, LocalDateTime.now());
+        Note note = new Note(UUID.randomUUID(), "Test Note 1", "Text 1", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now());
+        Note anotherNote = new Note(UUID.randomUUID(), "Test Note 2", "Text 2", Set.of(Constant.Tag.BUSINESS), LocalDateTime.now());
         List<Note> notes = List.of(note, anotherNote);
 
         List<NoteResponse> expectedResponse = Arrays.asList(
-                new NoteResponse(note.getId(), note.getTitle(), note.getText(), note.getTag(), note.getCreatedDate()),
-                new NoteResponse(anotherNote.getId(), anotherNote.getTitle(), anotherNote.getText(), anotherNote.getTag(), anotherNote.getCreatedDate())
+                new NoteResponse(note.getId(), note.getTitle(), note.getText(), note.getTags(), note.getCreatedDate()),
+                new NoteResponse(anotherNote.getId(), anotherNote.getTitle(), anotherNote.getText(), anotherNote.getTags(), anotherNote.getCreatedDate())
         );
 
         when(noteRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(notes));
         when(noteMapper.toResponseDTOList(anyList())).thenReturn(expectedResponse);
 
         // When
-        List<NoteResponse> actualResponse = noteService.fetchNotes(0, 10);
+        List<NoteResponse> actualResponse = noteService.fetchNotes(null,0, 10);
 
         // Then
         assertEquals(2, actualResponse.size());
@@ -108,11 +108,11 @@ class NoteServiceTest {
         int size = 10;
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
-        List<Note> notes = List.of(new Note(UUID.randomUUID(), "Test Note", "Text", Constant.Tag.PERSONAL, LocalDateTime.now()));
+        List<Note> notes = List.of(new Note(UUID.randomUUID(), "Test Note", "Text", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now()));
         Page<Note> notesPage = new org.springframework.data.domain.PageImpl<>(notes, pageable, notes.size());
         List<NoteSummary> expectedSummaries = List.of(new NoteSummary("Test Note", LocalDateTime.now()));
 
-        when(noteRepository.findByTagIn(eq(tags), eq(pageable))).thenReturn(notesPage);
+        when(noteRepository.findByTagsIn(eq(tags), eq(pageable))).thenReturn(notesPage);
         when(noteMapper.toSummaryDTOList(anyList())).thenReturn(expectedSummaries);
 
         // When
@@ -122,7 +122,7 @@ class NoteServiceTest {
         assertEquals(1, actualSummaries.size());
         assertEquals(expectedSummaries.get(0).getTitle(), actualSummaries.get(0).getTitle());
 
-        verify(noteRepository, times(1)).findByTagIn(eq(tags), eq(pageable));
+        verify(noteRepository, times(1)).findByTagsIn(eq(tags), eq(pageable));
         verify(noteMapper, times(1)).toSummaryDTOList(anyList());
     }
 
@@ -134,8 +134,8 @@ class NoteServiceTest {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
         List<Note> notes = Arrays.asList(
-                new Note(UUID.randomUUID(), "Test Note 1", "Text 1", Constant.Tag.PERSONAL, LocalDateTime.now()),
-                new Note(UUID.randomUUID(), "Test Note 2", "Text 2", Constant.Tag.BUSINESS, LocalDateTime.now())
+                new Note(UUID.randomUUID(), "Test Note 1", "Text 1", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now()),
+                new Note(UUID.randomUUID(), "Test Note 2", "Text 2", Set.of(Constant.Tag.BUSINESS), LocalDateTime.now())
         );
         Page<Note> notesPage = new org.springframework.data.domain.PageImpl<>(notes, pageable, notes.size());
         List<NoteSummary> expectedSummaries = Arrays.asList(
@@ -162,11 +162,11 @@ class NoteServiceTest {
     void shouldReturnNoteById() {
         // Given
         UUID id = UUID.randomUUID();
-        NoteResponse expectedResponse = new NoteResponse(id, "Test Note", "Text", Constant.Tag.PERSONAL, LocalDateTime.now());
+        NoteResponse expectedResponse = new NoteResponse(id, "Test Note", "Text", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now());
 
         // Mocking behavior
         when(noteRepository.findById(eq(id))).thenReturn(Optional.of(new Note(
-                id, "Test Note", "Text", Constant.Tag.PERSONAL, LocalDateTime.now())));
+                id, "Test Note", "Text", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now())));
         when(noteMapper.toResponseDTO(any(Note.class))).thenReturn(expectedResponse);
 
         // When
@@ -187,11 +187,11 @@ class NoteServiceTest {
         NoteRequest request = new NoteRequest();
         request.setTitle("Updated Note");
         request.setText("Updated Text");
-        request.setTag(Constant.Tag.BUSINESS);
+        request.setTags(Set.of(Constant.Tag.BUSINESS));
 
-        Note existingNote = new Note(id, "Test Note", "Text", Constant.Tag.PERSONAL, LocalDateTime.now());
-        Note updatedNote = new Note(id, "Updated Note", "Updated Text", Constant.Tag.BUSINESS, LocalDateTime.now());
-        NoteResponse expectedResponse = new NoteResponse(id, "Updated Note", "Updated Text", Constant.Tag.BUSINESS, LocalDateTime.now());
+        Note existingNote = new Note(id, "Test Note", "Text", Set.of(Constant.Tag.PERSONAL), LocalDateTime.now());
+        Note updatedNote = new Note(id, "Updated Note", "Updated Text", Set.of(Constant.Tag.BUSINESS), LocalDateTime.now());
+        NoteResponse expectedResponse = new NoteResponse(id, "Updated Note", "Updated Text", Set.of(Constant.Tag.BUSINESS), LocalDateTime.now());
 
         // Mocking behavior
         when(noteRepository.findById(eq(id))).thenReturn(Optional.of(existingNote));
@@ -204,7 +204,7 @@ class NoteServiceTest {
         // Then
         assertEquals(expectedResponse.getTitle(), actualResponse.getTitle());
         assertEquals(expectedResponse.getText(), actualResponse.getText());
-        assertEquals(expectedResponse.getTag(), actualResponse.getTag());
+        assertEquals(expectedResponse.getTags(), actualResponse.getTags());
 
         verify(noteRepository, times(1)).findById(eq(id));
         verify(noteRepository, times(1)).save(any(Note.class));

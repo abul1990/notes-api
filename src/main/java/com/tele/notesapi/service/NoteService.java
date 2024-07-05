@@ -32,19 +32,14 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public List<NoteResponse> fetchNotes(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+    public List<NoteResponse> fetchNotes(Set<Constant.Tag> tags, int page, int size) {
+        Page<Note> notesPage = getNotesPage(tags, page, size);
 
-        return noteMapper.toResponseDTOList(noteRepository.findAll(pageable).getContent());
+        return noteMapper.toResponseDTOList(notesPage.getContent());
     }
 
     public List<NoteSummary> fetchNoteSummaries(Set<Constant.Tag> tags, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-
-        Page<Note> notesPage = Optional.ofNullable(tags)
-                .filter(__ -> !tags.isEmpty())
-                .map(__ -> noteRepository.findByTagIn(tags, pageable))
-                .orElseGet(() -> noteRepository.findAll(pageable));
+        Page<Note> notesPage = getNotesPage(tags, page, size);
         return noteMapper.toSummaryDTOList(notesPage.getContent());
     }
 
@@ -63,7 +58,7 @@ public class NoteService {
                 .orElseThrow(() -> throwResourceNotFoundException(id));
         existingNote.setTitle(noteRequest.getTitle());
         existingNote.setText(noteRequest.getText());
-        existingNote.setTag(noteRequest.getTag());
+        existingNote.setTags(noteRequest.getTags());
 
         Note updatedNote = noteRepository.save(existingNote);
         return noteMapper.toResponseDTO(updatedNote);
@@ -84,6 +79,15 @@ public class NoteService {
 
     private ResourceNotFoundException throwResourceNotFoundException(UUID id) {
         return new ResourceNotFoundException(String.format("Note with ID %s not found", id));
+    }
+
+    private Page<Note> getNotesPage(Set<Constant.Tag> tags, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+        return Optional.ofNullable(tags)
+                .filter(__ -> !tags.isEmpty())
+                .map(__ -> noteRepository.findByTagsIn(tags, pageable))
+                .orElseGet(() -> noteRepository.findAll(pageable));
     }
 
     private Map<String, Integer> calculateWordFrequency(String text) {

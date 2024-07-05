@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -18,6 +19,6 @@ public class NoteResponse {
     private UUID id;
     private String title;
     private String text;
-    private Constant.Tag tag;
+    private Set<Constant.Tag> tags;
     private LocalDateTime createdDate;
 }

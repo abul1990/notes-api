@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -22,6 +23,6 @@ public class Note {
     private UUID id;
     private String title;
     private String text;
-    private Constant.Tag tag;
+    private Set<Constant.Tag> tags;
     private LocalDateTime createdDate;
 }

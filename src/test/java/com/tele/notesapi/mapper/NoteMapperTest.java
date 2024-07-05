@@ -11,6 +11,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +31,7 @@ public class NoteMapperTest {
         NoteRequest noteRequest = new NoteRequest();
         noteRequest.setTitle("Test Note");
         noteRequest.setText("This is a test note.");
-        noteRequest.setTag(Constant.Tag.PERSONAL);
+        noteRequest.setTags(Set.of(Constant.Tag.PERSONAL));
 
         // When
         Note result = noteMapper.toEntity(noteRequest);
@@ -38,13 +39,13 @@ public class NoteMapperTest {
         // Then
         assertEquals(noteRequest.getTitle(), result.getTitle());
         assertEquals(noteRequest.getText(), result.getText());
-        assertEquals(noteRequest.getTag(), result.getTag());
+        assertEquals(noteRequest.getTags(), result.getTags());
     }
 
     @Test
     public void shouldMapGivenNoteEntityToNoteResponseDTO() {
         // Given
-        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Constant.Tag.PERSONAL, null);
+        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Set.of(Constant.Tag.PERSONAL), null);
 
         // When
         NoteResponse result = noteMapper.toResponseDTO(note);
@@ -52,13 +53,13 @@ public class NoteMapperTest {
         // Then
         assertEquals(note.getTitle(), result.getTitle());
         assertEquals(note.getText(), result.getText());
-        assertEquals(note.getTag(), result.getTag());
+        assertEquals(note.getTags(), result.getTags());
     }
 
     @Test
     public void shouldMapToNoteResponseDTOList() {
         // Given
-        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Constant.Tag.PERSONAL, null);
+        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Set.of(Constant.Tag.PERSONAL), null);
         List<Note> noteList = Collections.singletonList(note);
 
         // When
@@ -68,13 +69,13 @@ public class NoteMapperTest {
         assertEquals(1, resultList.size());
         assertEquals(note.getTitle(), resultList.get(0).getTitle());
         assertEquals(note.getText(), resultList.get(0).getText());
-        assertEquals(note.getTag(), resultList.get(0).getTag());
+        assertEquals(note.getTags(), resultList.get(0).getTags());
     }
 
     @Test
     public void shouldMapToSummaryDTO() {
         // Given
-        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Constant.Tag.PERSONAL, null);
+        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Set.of(Constant.Tag.PERSONAL), null);
 
         // When
         NoteSummary result = noteMapper.toSummaryDTO(note);
@@ -87,7 +88,7 @@ public class NoteMapperTest {
     @Test
     public void shouldMapToSummaryDTOList() {
         // Given
-        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Constant.Tag.PERSONAL, null);
+        Note note = new Note(UUID.randomUUID(), "Test Note", "This is a test note.", Set.of(Constant.Tag.PERSONAL), null);
         List<Note> noteList = Collections.singletonList(note);
 
         // When

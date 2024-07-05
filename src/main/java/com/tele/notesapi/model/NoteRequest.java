@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class NoteRequest {
     @NotBlank(message = "Text cannot be blank")
     private String text;
 
-    private Constant.Tag tag;
+    private Set<Constant.Tag> tags;
 
     @NotNull(message = "Created Date cannot be blank")
     private LocalDateTime createdDate;

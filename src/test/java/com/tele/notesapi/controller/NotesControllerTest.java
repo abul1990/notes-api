@@ -57,7 +57,7 @@ class NotesControllerTest {
         when(noteService.fetchNoteSummaries(any(Set.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(Collections.singletonList(summary));
 
-        mockMvc.perform(get("/notes")
+        mockMvc.perform(get("/api/v1/notes")
                         .param("tags", Constant.Tag.PERSONAL.name())
                         .param("page", "0")
                         .param("size", "10")
@@ -73,7 +73,7 @@ class NotesControllerTest {
         noteRequest.setTitle("Test Note");
         noteRequest.setText("This is a test note.");
         noteRequest.setCreatedDate(LocalDateTime.now());
-        noteRequest.setTag(Constant.Tag.PERSONAL);
+        noteRequest.setTags(Set.of(Constant.Tag.PERSONAL));
 
         NoteResponse createdNoteResponse = new NoteResponse();
         createdNoteResponse.setTitle("Test Note");
@@ -81,7 +81,7 @@ class NotesControllerTest {
         when(noteService.createNote(any(NoteRequest.class)))
                 .thenReturn(createdNoteResponse);
 
-        mockMvc.perform(post("/notes")
+        mockMvc.perform(post("/api/v1/notes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(noteRequest)))
                 .andExpect(status().isCreated())
@@ -95,9 +95,9 @@ class NotesControllerTest {
         noteRequest.setTitle("Test Note");
         noteRequest.setText(null);
         noteRequest.setCreatedDate(LocalDateTime.now());
-        noteRequest.setTag(Constant.Tag.PERSONAL);
+        noteRequest.setTags(Set.of(Constant.Tag.PERSONAL));
 
-        mockMvc.perform(post("/notes")
+        mockMvc.perform(post("/api/v1/notes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(noteRequest)))
                 .andExpect(status().isBadRequest());
@@ -109,9 +109,9 @@ class NotesControllerTest {
         noteRequest.setTitle("");
         noteRequest.setText("This is a test note.");
         noteRequest.setCreatedDate(LocalDateTime.now());
-        noteRequest.setTag(Constant.Tag.PERSONAL);
+        noteRequest.setTags(Set.of(Constant.Tag.PERSONAL));
 
-        mockMvc.perform(post("/notes")
+        mockMvc.perform(post("/api/v1/notes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(noteRequest)))
                 .andExpect(status().isBadRequest());
@@ -125,7 +125,7 @@ class NotesControllerTest {
         expectedResponse.setText("This is a test note.");
         when(noteService.getNote(id)).thenReturn(expectedResponse);
 
-        mockMvc.perform(get("/notes/{id}", id)
+        mockMvc.perform(get("/api/v1//notes/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Note"));
@@ -137,7 +137,7 @@ class NotesControllerTest {
         NoteRequest noteRequest = new NoteRequest();
         noteRequest.setTitle("Updated Note");
         noteRequest.setText("This is an updated note.");
-        noteRequest.setTag(Constant.Tag.BUSINESS);
+        noteRequest.setTags(Set.of(Constant.Tag.BUSINESS));
 
         NoteResponse noteResponse = new NoteResponse();
         noteResponse.setTitle("Updated Note");
@@ -145,7 +145,7 @@ class NotesControllerTest {
         when(noteService.updateNote(any(UUID.class), any(NoteRequest.class)))
                 .thenReturn(noteResponse);
 
-        mockMvc.perform(put("/notes/{id}", id)
+        mockMvc.perform(put("/api/v1/notes/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(noteRequest)))
                 .andExpect(status().isOk())
@@ -155,7 +155,7 @@ class NotesControllerTest {
     @Test
     void shouldDeleteNoteById() throws Exception {
         UUID id = UUID.randomUUID();
-        mockMvc.perform(delete("/notes/{id}", id)
+        mockMvc.perform(delete("/api/v1/notes/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
@@ -172,7 +172,7 @@ class NotesControllerTest {
         
         when(noteService.getNoteTextStats(id)).thenReturn(expectedStats);
 
-        mockMvc.perform(get("/notes/{id}/stats", id)
+        mockMvc.perform(get("/api/v1/notes/{id}/stats", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.note").value(2))

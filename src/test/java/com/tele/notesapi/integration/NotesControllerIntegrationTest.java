@@ -51,7 +51,7 @@ public class NotesControllerIntegrationTest {
                   "createdDate": "2024-07-02T10:36:00"
                 }
                 """;
-        webTestClient.post().uri("/notes")
+        webTestClient.post().uri("/api/v1/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
                 .exchange()
@@ -64,7 +64,7 @@ public class NotesControllerIntegrationTest {
     @Test
     public void shouldReturnNotesWhenFetchedWithValidQueryParams() {
         webTestClient.get().uri(uriBuilder ->
-                        uriBuilder.path("/notes")
+                        uriBuilder.path("/api/v1/notes")
                                 .queryParam("tags", "PERSONAL")
                                 .queryParam("page", "0")
                                 .queryParam("size", "10")
@@ -87,7 +87,7 @@ public class NotesControllerIntegrationTest {
                   "createdDate": "2024-07-02T10:36:00"
                 }
                 """;
-        NoteResponse noteResponse = webTestClient.post().uri("/notes")
+        NoteResponse noteResponse = webTestClient.post().uri("/api/v1/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
                 .exchange()
@@ -95,7 +95,7 @@ public class NotesControllerIntegrationTest {
                 .returnResult(NoteResponse.class).getResponseBody().blockFirst();
 
         // Fetch the note stats
-        webTestClient.get().uri("/notes/" + noteResponse.getId() + "/stats")
+        webTestClient.get().uri("api/v1/notes/" + noteResponse.getId() + "/stats")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
@@ -116,7 +116,7 @@ public class NotesControllerIntegrationTest {
                   "createdDate": "2024-07-02T10:36:00"
                 }
                 """;
-        webTestClient.post().uri("/notes")
+        webTestClient.post().uri("/api/v1/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(newNote)
                 .exchange()
@@ -125,7 +125,7 @@ public class NotesControllerIntegrationTest {
 
     @Test
     public void shouldReturnNotFoundWhenNoteIdDoesNotExist() {
-        webTestClient.get().uri("/notes/" + UUID.randomUUID() + "/stats")
+        webTestClient.get().uri("/api/v1/notes/" + UUID.randomUUID() + "/stats")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound();

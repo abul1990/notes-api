@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/notes")
+@RequestMapping(value = "/api/v1/notes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NotesController {
 
     private final NoteService noteService;
@@ -42,9 +43,10 @@ public class NotesController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<List<NoteResponse>> fetchNotes(@RequestParam(defaultValue = "0") @Min(0) int page,
+    public ResponseEntity<List<NoteResponse>> fetchNotes(@Valid @RequestParam(required = false) Set<Constant.Tag> tags,
+                                                         @RequestParam(defaultValue = "0") @Min(0) int page,
                                                          @RequestParam(defaultValue = "10") @Min(1) int size) {
-        return ResponseEntity.ok(noteService.fetchNotes(page, size));
+        return ResponseEntity.ok(noteService.fetchNotes(tags, page, size));
     }
 
     @GetMapping("/{id}")

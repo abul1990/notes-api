@@ -10,6 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface NoteRepository extends MongoRepository<Note, UUID> {
-    Page<Note> findByTagIn(Set<Constant.Tag> tags, Pageable pageable);
+    Page<Note> findByTagsIn(Set<Constant.Tag> tags, Pageable pageable);
 
 }
