@@ -5,7 +5,7 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'com.tele.notesapi'
+group = 'com.teletronics.notesapi'
 version = '0.0.1-SNAPSHOT'
 
 java {
